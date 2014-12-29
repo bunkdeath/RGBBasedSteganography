@@ -11,6 +11,4 @@ class Steganography:
         return bin(int(binascii.hexlify(text), 16)).replace('0b', '')
 
     def binary_to_ascii(self, binary):
-        binary = int(binary, 2)
-
-        return binascii.unhexlify('%x' % binary)
+        return binascii.unhexlify('%x' % int(binary, 2))
