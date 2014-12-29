@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import binascii
+from PIL import Image
+import numpy
 
 
 class Steganography:
@@ -45,6 +47,51 @@ class Steganography:
 
     def set_encryption_key(self, encryption_key):
         self.encryption_key = encryption_key
+
+    def __pixel_to_rgb(self):
+        pass
+
+    def __set_bit_value(self, color_code, bit_value):
+        bit_value = int(bit_value)
+        even = (color_code % 2) == 0
+        if even and bit_value == 1:
+            return (color_code + 1)
+
+        elif not even and bit_value == 0:
+            return int(color_code - 1)
+
+        return color_code
+
+    def __pre_check(self):
+        return True
+
+    def encrypt(self):
+        text_length_in_binary = '{0:032b}'.format(len(self.text_content))
+
+        binary_conversion = self.ascii_to_binary(self.text_content)
+        binary_conversion = text_length_in_binary + binary_conversion
+
+        binary_list = list(binary_conversion)
+        binary_list.reverse()
+
+        image = Image.open(self.image_path)
+        width, height = image.size
+        r, g, b = numpy.array(image).T
+
+        if not self.__pre_check():
+            raise("text too large")
+
+        for i in range(width):
+            for j in range(height):
+                try:
+                    r[i][j] = self.__set_bit_value(r[i][j], binary_list.pop())
+                    g[i][j] = self.__set_bit_value(g[i][j], binary_list.pop())
+                    b[i][j] = self.__set_bit_value(b[i][j], binary_list.pop())
+                except IndexError:
+                    break
+
+        im = Image.fromarray(numpy.dstack([item.T for item in (r, g, b)]))
+        im.save('./images/output.png')
 
     def __str__(self):
         return "%s %s %s %s " % (self.image_path, self.text_content, self.encryption_key, self.text_file_path)
