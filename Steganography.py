@@ -99,18 +99,25 @@ class Steganography:
         r, g, b = numpy.array(image).T
 
         bit_from_image = ""
+        bit_length_check = 32
+        checking_for_text = False
         for i in range(width):
             for j in range(height):
                 bit_from_image += str(r[i][j] % 2)
                 bit_from_image += str(g[i][j] % 2)
                 bit_from_image += str(b[i][j] % 2)
 
-        length_bit = bit_from_image[:32]
-        bit_from_image = bit_from_image[32:]
-        text_length = int('0b%s' % length_bit, 2)
-        text = bit_from_image[:(text_length*8)-1]
+                if bit_length_check <= len(bit_from_image):
 
-        return self.binary_to_ascii(text)
+                    if not checking_for_text:
+                        checking_for_text = True
+                        length_bit = bit_from_image[:bit_length_check]
+                        bit_from_image = bit_from_image[bit_length_check:]
+                        text_length = int('0b%s' % length_bit, 2)
+                        bit_length_check = (text_length * 8) - 1
+                    else:
+                        bit_from_image = bit_from_image[:bit_length_check]
+                        return self.binary_to_ascii(bit_from_image)
 
     def __str__(self):
         return "%s %s %s %s " % (self.image_path, self.text_content, self.encryption_key, self.text_file_path)
