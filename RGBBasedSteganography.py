@@ -135,7 +135,8 @@ class RGBBasedSteganography:
                         return self.binary_to_ascii(bit_from_image)
 
     def __str__(self):
-        return "%s %s %s %s " % (self.image_path, self.text_content, self.encryption_key, self.text_file_path)
+        return "%s %s %s %s " % (self.image_path, self.text_content,
+                                 self.encryption_key, self.text_file_path)
 
     def __unicode__(self):
         return self.__str__()
