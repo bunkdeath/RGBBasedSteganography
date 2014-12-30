@@ -4,7 +4,7 @@ from PIL import Image
 import numpy
 
 
-class Steganography:
+class RGBBasedSteganography:
 
     def __init__(self, **kwargs):
         '''
