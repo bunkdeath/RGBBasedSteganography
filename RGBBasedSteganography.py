@@ -2,6 +2,7 @@
 import binascii
 from PIL import Image
 import numpy
+import os
 
 
 class RGBBasedSteganography:
@@ -37,9 +38,19 @@ class RGBBasedSteganography:
         return binascii.unhexlify('%x' % int(binary, 2))
 
     def set_image_path(self, image_path):
+        if not os.path.exists(image_path):
+            raise IOError(
+                "Filename '%s' not found. Please pass valid path." %
+                image_path)
+
         self.image_path = image_path
 
     def set_text_file_path(self, text_file_path):
+        if not os.path.exists(text_file_path):
+            raise IOError(
+                "Filename '%s' not found. Please pass valid path." %
+                text_file_path)
+
         self.set_text(open(text_file_path).read())
 
     def set_text(self, text):
