@@ -66,10 +66,11 @@ class Steganography:
         return True
 
     def encrypt(self):
-        text_length_in_binary = '{0:032b}'.format(len(self.text_content))
 
-        binary_conversion = self.ascii_to_binary(self.text_content)
-        binary_conversion = text_length_in_binary + binary_conversion
+        binary_converted_text = self.ascii_to_binary(self.text_content)
+        binary_text_length = '{0:032b}'.format(len(binary_converted_text))
+
+        binary_conversion = binary_text_length + binary_converted_text
 
         binary_list = list(binary_conversion)
         binary_list.reverse()
@@ -99,24 +100,27 @@ class Steganography:
         r, g, b = numpy.array(image).T
 
         bit_from_image = ""
-        bit_length_check = 32
-        checking_for_text = False
+        bit_length = 32
+        checking_for_binary_text = False
+
         for i in range(width):
             for j in range(height):
                 bit_from_image += str(r[i][j] % 2)
                 bit_from_image += str(g[i][j] % 2)
                 bit_from_image += str(b[i][j] % 2)
 
-                if bit_length_check <= len(bit_from_image):
+                if bit_length <= len(bit_from_image):
 
-                    if not checking_for_text:
-                        checking_for_text = True
-                        length_bit = bit_from_image[:bit_length_check]
-                        bit_from_image = bit_from_image[bit_length_check:]
-                        text_length = int('0b%s' % length_bit, 2)
-                        bit_length_check = (text_length * 8) - 1
+                    if not checking_for_binary_text:
+                        checking_for_binary_text = True
+
+                        text_length_in_binary = bit_from_image[:bit_length]
+
+                        bit_from_image = bit_from_image[bit_length:]
+                        text_length = int('0b%s' % text_length_in_binary, 2)
+                        bit_length = text_length
                     else:
-                        bit_from_image = bit_from_image[:bit_length_check]
+                        bit_from_image = bit_from_image[:bit_length]
                         return self.binary_to_ascii(bit_from_image)
 
     def __str__(self):
